@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, SafeAreaView, Platform, View } from "react-native";
 import { FAB } from "react-native-paper";
 import useAppTheme from "../utils/colors";
@@ -11,35 +11,43 @@ import { FlashList } from "@shopify/flash-list";
 
 import { useRouter } from "expo-router";
 import { TaskComponent } from "../components/taskComponent";
-
-const states = ["All", "In Progress", "Pending", "Completed"];
-const states2 = [
-  "All",
-  "In Progress",
-  "Pending",
-  "Completed",
-  "All",
-  "In Progress",
-  "Pending",
-  "Completed",
-  "Completed",
-  "All",
-  "In Progress",
-  "Pending",
-  "Completed",
-];
+import { useDispatch, useSelector } from "react-redux";
+import { fetchTasks } from "../store/actions/task";
+import { RootState } from "../store/reducers/ store";
+import { TaskModel } from "../store/models/taskModel";
+import { EmptyListComponent } from "../components/emptyListComponent";
+import { STATES } from "../utils/constants";
 
 export const HomeScreen = () => {
   //hooks
   const colors = useAppTheme();
   const router = useRouter();
 
-  const [state, setState] = useState("All");
+  const [state, setState] = useState("ALL");
 
-  //
+  ///
   const goToaddTask = () => {
     router.navigate("add");
   };
+
+  // filter tasks
+  function filterTasks(value: string): TaskModel[] {
+    if (value === "ALL") {
+      return tasks;
+    }
+    return tasks.filter((item) => item.status === value);
+  }
+
+  // redux
+  const dispatch = useDispatch();
+  // get state from store
+  const tasks = useSelector((state: RootState) => state) as TaskModel[];
+
+  useEffect(() => {
+    // fetch all tasks
+    dispatch(fetchTasks());
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
       {/* App bar */}
@@ -60,17 +68,35 @@ export const HomeScreen = () => {
 
       {/* chips row */}
       <View style={styles.chipRowContainer}>
-        {states.map((item, i) => {
+        <Chip
+          style={{
+            backgroundColor: "ALL" === state ? colors.primary : colors.primary,
+            opacity: "ALL" === state ? 1.0 : 0.7,
+          }}
+          compact={true}
+          selected={"ALL" === state}
+          selectedColor={colors.white}
+          textStyle={[
+            styles.chipText,
+            {
+              color: colors.white,
+            },
+          ]}
+          onPress={() => setState("ALL")}
+        >
+          ALL
+        </Chip>
+        {STATES.map((item, i) => {
           return (
             <Chip
               key={i}
               style={{
                 backgroundColor:
-                  item === state ? colors.primary : colors.primary,
-                opacity: item === state ? 1.0 : 0.7,
+                  item.value === state ? colors.primary : colors.primary,
+                opacity: item.value === state ? 1.0 : 0.7,
               }}
               compact={true}
-              selected={item === state}
+              selected={item.value === state}
               selectedColor={colors.white}
               textStyle={[
                 styles.chipText,
@@ -78,9 +104,9 @@ export const HomeScreen = () => {
                   color: colors.white,
                 },
               ]}
-              onPress={() => setState(item)}
+              onPress={() => setState(item.value)}
             >
-              {item}
+              {item.label}
             </Chip>
           );
         })}
@@ -88,18 +114,25 @@ export const HomeScreen = () => {
 
       {/* content */}
       <FlashList
-        data={states2}
+        data={filterTasks(state)}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingHorizontal: 15,
           paddingBottom: 75,
         }}
+        ListEmptyComponent={EmptyListComponent}
         renderItem={({ item }) => {
           return (
             <TaskComponent
-              key={item}
+              key={item.id}
+              item={item}
               onPress={() => {
-                router.navigate("detail");
+                router.push({
+                  pathname: "/detail",
+                  params: {
+                    item: JSON.stringify(item),
+                  },
+                });
               }}
             />
           );

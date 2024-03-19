@@ -1,14 +1,19 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { TextTopography } from "../utils/textTopograhy";
 import { TextFontFamily } from "../utils/fontFamily";
-import useAppTheme from "../utils/colors";
+import useAppTheme, { mapStateToColor } from "../utils/colors";
 import Ii from "react-native-vector-icons/Ionicons";
 import React from "react";
+import { TaskModel } from "../store/models/taskModel";
+import moment from "moment";
 
 interface TaskComponentProps {
   onPress?: () => void;
+  item: TaskModel;
 }
+
 export const TaskComponent: React.FC<TaskComponentProps> = ({
+  item,
   onPress,
 }: TaskComponentProps) => {
   const colors = useAppTheme();
@@ -28,9 +33,7 @@ export const TaskComponent: React.FC<TaskComponentProps> = ({
       </View>
       {/* text container */}
       <View style={styles.textContainer}>
-        <Text style={[TextTopography.h5]}>
-          Product Design Task Managment app{" "}
-        </Text>
+        <Text style={[TextTopography.h5]}>{item.name}</Text>
         {/* actions container */}
         <View style={styles.actionsContainer}>
           <Text
@@ -42,13 +45,13 @@ export const TaskComponent: React.FC<TaskComponentProps> = ({
               },
             ]}
           >
-            Mon 12 2022, 12:30
+            {moment(item.dueDate).format("YYYY-MM-DD")}
           </Text>
           <View
             style={[
               styles.stateContainer,
               {
-                backgroundColor: colors.orangeLight,
+                backgroundColor: mapStateToColor(item.status).muted,
               },
             ]}
           >
@@ -56,12 +59,13 @@ export const TaskComponent: React.FC<TaskComponentProps> = ({
               style={[
                 TextTopography.caption,
                 {
-                  color: colors.orange,
+                  color:  mapStateToColor(item.status).color,
+                  fontWeight: '700',
                   textTransform: "uppercase",
                 },
               ]}
             >
-              in progress
+              {item.status}
             </Text>
           </View>
         </View>

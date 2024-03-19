@@ -17,6 +17,8 @@ import {
 } from "@expo-google-fonts/montserrat";
 import { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
+import { Provider } from "react-redux";
+import store from "../src/store/reducers/ store";
 
 // prevent the os from removing the splashscreen
 // until fonts are loaded
@@ -47,52 +49,54 @@ const IndexLayout = () => {
   }
   return (
     <View style={styles.container} onLayout={onLayoutRootView}>
-      <PaperProvider>
-        <SafeAreaProvider>
-          <Stack>
-            {/* Splash screen show for new users */}
-            <Stack.Screen
-              name="index"
-              options={{
-                headerShown: false,
-              }}
-            />
+      <Provider store={store}>
+        <PaperProvider>
+          <SafeAreaProvider>
+            <Stack>
+              {/* Splash screen show for new users */}
+              <Stack.Screen
+                name="index"
+                options={{
+                  headerShown: false,
+                }}
+              />
 
-            {/* home page: view, add, edit */}
-            <Stack.Screen
-              name="home"
-              options={{
-                headerShown: false,
-              }}
-            />
+              {/* home page: view, add, edit */}
+              <Stack.Screen
+                name="home"
+                options={{
+                  headerShown: false,
+                }}
+              />
 
-            {/* Detail page: view more details about the task */}
-            <Stack.Screen
-              name="detail"
-              options={{
-                headerShown: false,
-                presentation: "modal",
-              }}
-            />
+              {/* Detail page: view more details about the task */}
+              <Stack.Screen
+                name="detail"
+                options={{
+                  headerShown: false,
+                  presentation: "modal",
+                }}
+              />
 
-            {/* Edit page: edit details */}
-            <Stack.Screen
-              name="edit"
-              options={{
-                headerShown: false,
-              }}
-            />
+              {/* Edit page: edit details */}
+              <Stack.Screen
+                name="edit"
+                options={{
+                  headerShown: false,
+                }}
+              />
 
-            {/* Add Task page: page to add new task */}
-            <Stack.Screen
-              name="add"
-              options={{
-                headerShown: false,
-              }}
-            />
-          </Stack>
-        </SafeAreaProvider>
-      </PaperProvider>
+              {/* Add Task page: page to add new task */}
+              <Stack.Screen
+                name="add"
+                options={{
+                  headerShown: false,
+                }}
+              />
+            </Stack>
+          </SafeAreaProvider>
+        </PaperProvider>
+      </Provider>
     </View>
   );
 };

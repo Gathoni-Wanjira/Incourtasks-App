@@ -1,13 +1,42 @@
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import { SafeAreaView, StyleSheet, ScrollView, Text, View } from "react-native";
-import { Appbar } from "react-native-paper";
+import { Appbar, Snackbar } from "react-native-paper";
 import useAppTheme from "../utils/colors";
 import { TextTopography } from "../utils/textTopograhy";
 import { TextFontFamily } from "../utils/fontFamily";
+import { TaskModel } from "../store/models/taskModel";
+import { useDispatch } from "react-redux";
+import { deleteTask } from "../store/actions/task";
+import { useState } from "react";
 
 export const DetailScreen = () => {
+  const dispatch = useDispatch();
+  const { item } = useLocalSearchParams();
   const colors = useAppTheme();
   const router = useRouter();
+
+  const [message, setMessage] = useState("");
+  const [visible, setVisible] = useState(false);
+
+  const removeTask = () => {
+    try {
+      const id = (JSON.parse((item as string) ?? "{}") as TaskModel).id;
+      if (id) {
+        dispatch(deleteTask(id));
+        setVisible(true);
+        setMessage("Deleted task successfully");
+        router.back();
+      } else {
+        console.log('Item',item)
+        setVisible(true);
+        setMessage("Error in deleting task");
+      }
+    } catch (e) {
+      setVisible(true);
+      setMessage("Error in deleting task");
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <Appbar.Header>
@@ -16,9 +45,15 @@ export const DetailScreen = () => {
         <Appbar.Action
           icon="pencil"
           onPress={() => {
-            router.navigate("edit");
+            router.push({
+              pathname: "/edit",
+              params: {
+                item: item,
+              },
+            });
           }}
         />
+        <Appbar.Action icon="delete" onPress={removeTask} />
       </Appbar.Header>
       <ScrollView contentContainerStyle={styles.scrollViewContainer}>
         <Text
@@ -31,7 +66,7 @@ export const DetailScreen = () => {
         >
           Name
         </Text>
-        <Text>Sample Name</Text>
+        <Text>{(JSON.parse((item as string) ?? "{}") as TaskModel).name}</Text>
         <View style={styles.spacer} />
         <Text
           style={[
@@ -43,7 +78,23 @@ export const DetailScreen = () => {
         >
           Description
         </Text>
-        <Text>Sample Description</Text>
+        <Text>
+          {(JSON.parse((item as string) ?? "{}") as TaskModel).description}
+        </Text>
+        <View style={styles.spacer} />
+        <Text
+          style={[
+            TextTopography.h4,
+            {
+              ...TextFontFamily.semiBold,
+            },
+          ]}
+        >
+          Date Due
+        </Text>
+        <Text>
+          {(JSON.parse((item as string) ?? "{}") as TaskModel).dueDate}
+        </Text>
         <View style={styles.spacer} />
         <Text
           style={[
@@ -55,7 +106,9 @@ export const DetailScreen = () => {
         >
           Date Created
         </Text>
-        <Text>Mon 12 2024, 14:09 PM</Text>
+        <Text>
+          {(JSON.parse((item as string) ?? "{}") as TaskModel).createdAt}
+        </Text>
         <View style={styles.spacer} />
         <Text
           style={[
@@ -67,8 +120,17 @@ export const DetailScreen = () => {
         >
           Status
         </Text>
-        <Text>In Progress</Text>
+        <Text>
+          {(JSON.parse((item as string) ?? "{}") as TaskModel).status}
+        </Text>
       </ScrollView>
+      <Snackbar
+        visible={visible}
+        duration={4000}
+        onDismiss={() => setVisible(false)}
+      >
+        {message}
+      </Snackbar>
     </SafeAreaView>
   );
 };
