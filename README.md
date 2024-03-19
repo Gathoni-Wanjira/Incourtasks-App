@@ -72,4 +72,10 @@ If it gives you the option to either run android or ios press `a` for android an
 
 The final app looks like this:
 
-<img src="" width="240"/> 
+<img src="https://github.com/Gathoni-Wanjira/Incourtasks-App/blob/Main/screenshots/1.png?raw=true" width="240"/>
+<img src="https://github.com/Gathoni-Wanjira/Incourtasks-App/blob/Main/screenshots/2.png?raw=true" width="240"/> 
+<img src="https://github.com/Gathoni-Wanjira/Incourtasks-App/blob/Main/screenshots/3.png?raw=true" width="240"/> 
+<img src="https://github.com/Gathoni-Wanjira/Incourtasks-App/blob/Main/screenshots/4.png?raw=true" width="240"/> 
+<img src="https://github.com/Gathoni-Wanjira/Incourtasks-App/blob/Main/screenshots/5.png?raw=true" width="240"/> 
+<img src="https://github.com/Gathoni-Wanjira/Incourtasks-App/blob/Main/screenshots/6.png?raw=true" width="240"/> 
+<img src="https://github.com/Gathoni-Wanjira/Incourtasks-App/blob/Main/screenshots/7.png?raw=true" width="240"/> 
