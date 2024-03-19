@@ -69,7 +69,6 @@ If it gives you the option to either run android or ios press `a` for android an
     * Jest
 
 
-
 The final app looks like this:
 
 <img src="https://github.com/Gathoni-Wanjira/Incourtasks-App/blob/Main/screenshots/1.png?raw=true" width="240"/>
