@@ -2,6 +2,7 @@ import {
   ADD_TASK,
   DELETE_TASK,
   EDIT_TASK,
+  FETCH_TASKS,
   SET_TASKS,
 } from "../models/actionTypes";
 import { TaskModel } from "../models/taskModel";
@@ -22,6 +23,8 @@ const taskReducer = (state = initialState, action: any) => {
       );
     case DELETE_TASK:
       return state.filter((task) => task.id !== action.payload);
+    case FETCH_TASKS:
+      return action.payload;
     case SET_TASKS:
       return action.payload;
     default:

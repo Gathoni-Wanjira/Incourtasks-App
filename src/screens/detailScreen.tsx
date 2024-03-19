@@ -8,6 +8,8 @@ import { TaskModel } from "../store/models/taskModel";
 import { useDispatch } from "react-redux";
 import { deleteTask } from "../store/actions/task";
 import { useState } from "react";
+import { UnknownAction } from "@reduxjs/toolkit";
+import moment from "moment";
 
 export const DetailScreen = () => {
   const dispatch = useDispatch();
@@ -22,12 +24,12 @@ export const DetailScreen = () => {
     try {
       const id = (JSON.parse((item as string) ?? "{}") as TaskModel).id;
       if (id) {
-        dispatch(deleteTask(id));
+        dispatch(deleteTask(id) as unknown as UnknownAction);
         setVisible(true);
         setMessage("Deleted task successfully");
         router.back();
       } else {
-        console.log('Item',item)
+        console.log("Item", item);
         setVisible(true);
         setMessage("Error in deleting task");
       }
@@ -93,7 +95,9 @@ export const DetailScreen = () => {
           Date Due
         </Text>
         <Text>
-          {(JSON.parse((item as string) ?? "{}") as TaskModel).dueDate}
+          {moment(
+            (JSON.parse((item as string) ?? "{}") as TaskModel).dueDate
+          ).format("YYYY-MM-DD")}
         </Text>
         <View style={styles.spacer} />
         <Text
@@ -107,7 +111,9 @@ export const DetailScreen = () => {
           Date Created
         </Text>
         <Text>
-          {(JSON.parse((item as string) ?? "{}") as TaskModel).createdAt}
+          {moment(
+            (JSON.parse((item as string) ?? "{}") as TaskModel).createdAt
+          ).format("YYYY-MM-DD")}
         </Text>
         <View style={styles.spacer} />
         <Text

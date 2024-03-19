@@ -6,8 +6,15 @@ import { TextTopography } from "../utils/textTopograhy";
 import { TextFontFamily } from "../utils/fontFamily";
 import { Button } from "react-native-paper";
 import { useRouter } from "expo-router";
+import { useEffect } from "react";
+import { setupDatabase } from "../data/database";
 
 export const LandingScreen = () => {
+  useEffect(() => {
+    // setup DB when we launch the app first time
+    setupDatabase();
+  }, []);
+
   // hooks
   const colors = useAppTheme();
   const router = useRouter();
@@ -58,7 +65,7 @@ export const LandingScreen = () => {
           buttonColor={colors.orange}
           textColor={colors.mutedText}
           onPress={() => {
-            router.replace('home');
+            router.replace("home");
           }}
         >
           GET STARTED
