@@ -1,6 +1,6 @@
-# MyTask App
+# Incourtask App
 
-a task management app built for Incourage Frontend Engineer interview
+- A task management app built for Incourage Frontend Engineer interview. 
 
 
 ## Presquites:
