@@ -17,6 +17,7 @@ import { addTask } from "../store/actions/task";
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
+import { UnknownAction } from "@reduxjs/toolkit";
 
 export const AddTaskScreen = () => {
   const colors = useAppTheme();
@@ -61,7 +62,7 @@ export const AddTaskScreen = () => {
         createdAt: new Date().toISOString(),
       };
       console.log("data", newData);
-      dispatch(addTask(newData));
+      dispatch(((addTask(newData)) as unknown) as UnknownAction);
       setVisible(true);
       setMessage("Added task successfully");
     } catch (e) {

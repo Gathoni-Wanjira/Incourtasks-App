@@ -17,6 +17,7 @@ import { RootState } from "../store/reducers/ store";
 import { TaskModel } from "../store/models/taskModel";
 import { EmptyListComponent } from "../components/emptyListComponent";
 import { STATES } from "../utils/constants";
+import { UnknownAction } from "@reduxjs/toolkit";
 
 export const HomeScreen = () => {
   //hooks
@@ -45,7 +46,7 @@ export const HomeScreen = () => {
 
   useEffect(() => {
     // fetch all tasks
-    dispatch(fetchTasks());
+    dispatch(fetchTasks() as unknown as UnknownAction);
   }, []);
 
   return (
@@ -120,6 +121,8 @@ export const HomeScreen = () => {
           paddingHorizontal: 15,
           paddingBottom: 75,
         }}
+        // refreshing={true}
+        // onRefresh={() => dispatch(fetchTasks() as unknown as UnknownAction)}
         ListEmptyComponent={EmptyListComponent}
         renderItem={({ item }) => {
           return (

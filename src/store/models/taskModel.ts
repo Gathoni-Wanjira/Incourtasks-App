@@ -4,5 +4,5 @@ export interface TaskModel {
   description: string;
   status: string;
   dueDate: string;
-  createdAt: string; // Autogenerates when creating a task
+  createdAt: string; // we need to auto generate when creating a task
 }

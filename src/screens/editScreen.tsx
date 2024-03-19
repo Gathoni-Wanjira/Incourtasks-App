@@ -18,6 +18,8 @@ import { editTask } from "../store/actions/task";
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
+import React from "react";
+import { UnknownAction } from "@reduxjs/toolkit";
 
 export const EditScreen = () => {
   const dispatch = useDispatch();
@@ -70,11 +72,16 @@ export const EditScreen = () => {
         ...(description != null && {
           description: description,
         }),
+        // update due date
+        ...(selectedDate != null && {
+          dueDate: selectedDate.toISOString(),
+        }),
         // status can't be null at this point
         status: status,
       };
+      console.log("New payload", newPayload)
       if (payload.id) {
-        dispatch(editTask(payload.id!, newPayload));
+        dispatch(((editTask(payload.id, newPayload)) as unknown) as UnknownAction);
         setVisible(true);
         setMessage("Successfully edited task");
         setTimeout(() => {
