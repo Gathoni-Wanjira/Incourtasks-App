@@ -8,75 +8,71 @@ import {
   View,
   Keyboard,
 } from "react-native";
-import { Appbar, TextInput, Button, Snackbar } from "react-native-paper";
+import {
+  Appbar,
+  TextInput,
+  Button,
+  Snackbar,
+  HelperText,
+} from "react-native-paper";
 import useAppTheme from "../utils/colors";
 import { useDispatch } from "react-redux";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { TaskModel } from "../store/models/taskModel";
 import { addTask } from "../store/actions/task";
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
 import { UnknownAction } from "@reduxjs/toolkit";
+import { Formik } from "formik";
+import * as Yup from "yup";
+
+interface FormValues {
+  name: string | undefined;
+  description: string | undefined;
+  dueDate: Date | undefined;
+}
+
+const AddTaskchema = Yup.object().shape({
+  name: Yup.string().required("Required"),
+  description: Yup.string().required("Required"),
+  dueDate: Yup.date().required("Required"),
+});
 
 export const AddTaskScreen = () => {
   const colors = useAppTheme();
   const router = useRouter();
 
   // state
-  const [name, setName] = useState<string | undefined>(undefined);
-  const [description, setDescription] = useState<string | undefined>(undefined);
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [showPicker, setShowPicker] = useState<boolean>(false);
   const [message, setMessage] = useState("");
   const [visible, setVisible] = useState(false);
 
-  const clearForm = () => {
-    setName("");
-    setDescription("");
-    setSelectedDate(undefined);
-  };
-
   // redux
   const dispatch = useDispatch();
 
-  const onChange = (_: DateTimePickerEvent, date?: Date) => {
-    if (date === undefined) {
-      return;
-    }
-    setShowPicker(false);
-    setSelectedDate(date);
-  };
-
-  const submitForm = () => {
+  const submitForm = (values: FormValues) => {
     try {
-      if (!name || !description || !selectedDate) {
-        return;
-      }
       const newData: TaskModel = {
         id: Math.random(),
-        name: name,
-        description: description,
+        name: values.name!,
+        description: values.description!,
         status: "PENDING",
-        dueDate: selectedDate.toISOString(),
+        dueDate: values.dueDate!.toISOString(),
         createdAt: new Date().toISOString(),
       };
-      console.log("data", newData);
-      dispatch(((addTask(newData)) as unknown) as UnknownAction);
+      // console.log("data", newData);
+      dispatch(addTask(newData) as unknown as UnknownAction);
       setVisible(true);
       setMessage("Added task successfully");
+      setTimeout(()=>{
+        router.back()
+      }, 1500);
     } catch (e) {
       setVisible(true);
       setMessage("Error adding tasks");
     }
   };
-
-  useEffect(() => {
-    // side effect when done clear form
-    if (visible) {
-      clearForm();
-    }
-  }, [visible]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -84,82 +80,123 @@ export const AddTaskScreen = () => {
         <Appbar.BackAction onPress={() => router.back()} />
         <Appbar.Content title="Add Task" />
       </Appbar.Header>
-      <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-        <Text>Name</Text>
-        <TextInput
-          mode="outlined"
-          outlineColor={colors.primary}
-          activeOutlineColor={colors.primary}
-          value={name}
-          onChangeText={(text) => setName(text)}
-        />
-        <Text>Due Date</Text>
-        <TouchableOpacity
-          style={[
-            {
-              backgroundColor: colors.lightestGrey,
-              borderColor: colors.lighterGrey,
-            },
-          ]}
-          onPress={() => setShowPicker(!showPicker)}
-        >
-          <View
-            style={[
-              styles.selectContainer,
-              {
-                backgroundColor: colors.white,
-                borderColor: colors.primary,
-              },
-            ]}
-          >
-            {selectedDate ? (
-              <Text style={styles.dateText}>{selectedDate.toDateString()}</Text>
-            ) : (
-              <></>
+      <Formik
+        initialValues={
+          {
+            name: undefined,
+            description: undefined,
+            dueDate: undefined,
+          } as FormValues
+        }
+        onSubmit={submitForm}
+        validationSchema={AddTaskchema}
+      >
+        {({
+          handleChange,
+          handleSubmit,
+          errors,
+          values,
+          setFieldValue,
+        }) => (
+          <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+            <Text>Name</Text>
+            <TextInput
+              mode="outlined"
+              outlineColor={colors.primary}
+              activeOutlineColor={colors.primary}
+              value={values.name}
+              onChangeText={handleChange("name")}
+            />
+            {errors.name && (
+              <HelperText type="error" visible={true}>
+                {errors.name}
+              </HelperText>
             )}
-            {showPicker && (
-              <DateTimePicker
-                value={selectedDate ?? new Date()}
-                mode={"date"}
-                minimumDate={new Date()}
-                onTouchCancel={() => {
-                  setShowPicker(false);
-                }}
-                onTouchEnd={() => {
-                  setShowPicker(false);
-                }}
-                onChange={onChange}
-              />
-            )}
-          </View>
-        </TouchableOpacity>
-        <Text>Description</Text>
-        <TextInput
-          mode="outlined"
-          multiline={true}
-          style={{
-            height: 150,
-          }}
-          outlineColor={colors.primary}
-          activeOutlineColor={colors.primary}
-          value={description}
-          onChangeText={(text) => setDescription(text)}
-        />
 
-        <Button
-          mode="contained"
-          buttonColor={colors.orange}
-          textColor={colors.mutedText}
-          style={styles.addButton}
-          onPress={() => {
-            // keyboard dismiss
-            Keyboard.dismiss();
-            submitForm();
-          }}
-        >
-          ADD TASK
-        </Button>
-      </ScrollView>
+            <Text>Due Date</Text>
+            <TouchableOpacity
+              style={[
+                {
+                  backgroundColor: colors.lightestGrey,
+                  borderColor: colors.lighterGrey,
+                },
+              ]}
+              onPress={() => setShowPicker(!showPicker)}
+            >
+              <View
+                style={[
+                  styles.selectContainer,
+                  {
+                    backgroundColor: colors.white,
+                    borderColor: colors.primary,
+                  },
+                ]}
+              >
+                {values.dueDate ? (
+                  <Text style={styles.dateText}>
+                    {values.dueDate.toDateString()}
+                  </Text>
+                ) : (
+                  <></>
+                )}
+                {showPicker && (
+                  <DateTimePicker
+                    value={values.dueDate ?? new Date()}
+                    mode={"date"}
+                    minimumDate={new Date()}
+                    onTouchCancel={() => {
+                      setShowPicker(false);
+                    }}
+                    onTouchEnd={() => {
+                      setShowPicker(false);
+                    }}
+                    onChange={(_: DateTimePickerEvent, date?: Date) => {
+                      setShowPicker(false);
+                      setFieldValue("dueDate", date);
+                    }}
+                  />
+                )}
+              </View>
+            </TouchableOpacity>
+            {errors.dueDate && (
+              <HelperText type="error" visible={true}>
+                {errors.dueDate}
+              </HelperText>
+            )}
+            <Text>Description</Text>
+            <TextInput
+              mode="outlined"
+              multiline={true}
+              style={{
+                height: 150,
+              }}
+              outlineColor={colors.primary}
+              activeOutlineColor={colors.primary}
+              value={values.description}
+              onChangeText={handleChange("description")}
+            />
+            {errors.description && (
+              <HelperText type="error" visible={true}>
+                {errors.description}
+              </HelperText>
+            )}
+
+            <Button
+              mode="contained"
+              buttonColor={colors.orange}
+              textColor={colors.mutedText}
+              style={styles.addButton}
+              onPress={() => {
+                // keyboard dismiss
+                Keyboard.dismiss();
+                handleSubmit();
+              }}
+            >
+              ADD TASK
+            </Button>
+          </ScrollView>
+        )}
+      </Formik>
 
       <Snackbar
         visible={visible}
