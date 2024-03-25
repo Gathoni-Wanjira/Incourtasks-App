@@ -75,8 +75,6 @@ The final app looks like this:
 
 https://github.com/Gathoni-Wanjira/Incourtasks-App/assets/95654321/ec90a032-59b4-4045-bd89-a9fa3137497c
 
-https://github.com/Gathoni-Wanjira/Incourtasks-App/assets/95654321/ec90a032-59b4-4045-bd89-a9fa3137497c
-
 <img src="https://github.com/Gathoni-Wanjira/Incourtasks-App/blob/Main/screenshots/1.png?raw=true" width="240"/>
 <img src="https://github.com/Gathoni-Wanjira/Incourtasks-App/blob/Main/screenshots/2.png?raw=true" width="240"/> 
 <img src="https://github.com/Gathoni-Wanjira/Incourtasks-App/blob/Main/screenshots/3.png?raw=true" width="240"/> 
